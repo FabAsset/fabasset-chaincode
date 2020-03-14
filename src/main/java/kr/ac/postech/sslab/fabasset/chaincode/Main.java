@@ -8,6 +8,7 @@ import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.TokenTypeManagement;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.Default;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.ERC721;
+import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
@@ -348,51 +349,113 @@ public class Main extends ChaincodeBase {
     }
 
     private String setURI(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+        if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+            String id = args.get(0);
+            Map<String, String> uri = objectMapper.readValue(args.get(1), new TypeReference<HashMap<String, String>>() {});
+
+            return Boolean.toString(Extension.setURI(stub, id, uri));
+        }
+        else if (args.size() == 3) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+            }
+
+            String tokenId = args.get(0);
+            String index = args.get(1);
+            String value = args.get(2);
+
+            return Boolean.toString(Extension.setURI(stub, tokenId, index, value));
+
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
-        String value = args.get(2);
-
-        return Boolean.toString(Extension.setURI(stub, tokenId, index, value));
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2 or 3"));
     }
 
     private String getURI(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        if (args.size() == 1) {
+            if (isNullOrEmpty(args.get(0))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
+            }
+
+            String id = args.get(0);
+
+            return objectMapper.writeValueAsString(Extension.getURI(stub, id));
         }
-        String tokenId = args.get(0);
-        String index = args.get(1);
-        return Extension.getURI(stub, tokenId, index);
+        else if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+
+            return Extension.getURI(stub, id, index);
+        }
+
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
     }
 
     private String setXAttr(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+        if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            Map<String, Object> xattr = objectMapper.readValue(args.get(1), new TypeReference<HashMap<String, Object>>() {});
+
+            return Boolean.toString(Extension.setXAttr(stub, id, xattr));
+        }
+        else if (args.size() == 3) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+            }
+
+            String tokenId = args.get(0);
+            String index = args.get(1);
+
+            TokenTypeManager manager = TokenTypeManager.load(stub);
+            List<String> info = manager.getAttribute(Default.getType(stub, tokenId), index);
+            String dataType = info.get(0);
+            Object value = DataTypeConversion.strToDataType(dataType, args.get(2));
+
+            return Boolean.toString(Extension.setXAttr(stub, tokenId, index, value));
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
-        String value = args.get(2);
-
-        return Boolean.toString(Extension.setXAttr(stub, tokenId, index, value));
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2 or 3"));
     }
 
     private String getXAttr(ChaincodeStub stub, List<String> args)  throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        if (args.size() == 1) {
+            if (isNullOrEmpty(args.get(0))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
+            }
+
+            String id = args.get(0);
+
+            return objectMapper.writeValueAsString(Extension.getXAttr(stub, id));
+        }
+        else if(args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+
+            Object value = Extension.getXAttr(stub, id, index);
+
+            TokenTypeManager manager = TokenTypeManager.load(stub);
+            List<String> info = manager.getAttribute(Default.getType(stub, id), index);
+            String dataType = info.get(0);
+
+            return DataTypeConversion.dataTypeToStr(dataType, value);
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
-
-        return Extension.getXAttr(stub, tokenId, index);
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
     }
 
     private String enrollTokenType(ChaincodeStub stub, List<String> args) throws IOException {

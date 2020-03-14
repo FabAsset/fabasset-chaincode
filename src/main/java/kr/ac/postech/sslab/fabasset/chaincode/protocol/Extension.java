@@ -1,7 +1,6 @@
 package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
 import com.google.protobuf.ByteString;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
@@ -48,7 +47,7 @@ public class Extension {
             return false;
         }
 
-        if (!hasValidURI(uri)) {
+        if (hasInvalidURI(uri)) {
             return false;
         }
 
@@ -110,21 +109,36 @@ public class Extension {
         return true;
     }
 
-    private static boolean hasValidURI(Map<String, String> uri) {
+    private static boolean hasInvalidURI(Map<String, String> uri) {
         if (uri == null) {
             uri = new HashMap<>();
             uri.put(HASH_KEY, "");
             uri.put(PATH_KEY, "");
 
+            return false;
+        }
+        else if (uri.keySet().size() == 1) {
+            if (uri.containsKey(PATH_KEY)) {
+                uri.put(HASH_KEY, "");
+                return false;
+            }
+            else if (uri.containsKey(HASH_KEY)) {
+                uri.put(PATH_KEY, "");
+                return false;
+            }
+
             return true;
         }
+        else if (uri.keySet().size() == 2) {
+            return !uri.containsKey(PATH_KEY) || !uri.containsKey(HASH_KEY);
+        }
 
-        return uri.keySet().size() == 2 && uri.containsKey(PATH_KEY) && uri.containsKey(HASH_KEY);
+        return true;
     }
 
-    private static void eventExtensibleAttribute(ChaincodeStub stub, String id, String index, String value) {
-        String message = String.format("Update attribute %s to %s in Token %s", index, value, id);
-        stub.setEvent("ExtensibleAttribute", ByteString.copyFromUtf8(message).toByteArray());
+    private static void eventURI(ChaincodeStub stub, String id, Map<String, String> uri) {
+        String message = String.format("Update uri to %s in Token %s", uri.toString(), id);
+        stub.setEvent("URI", ByteString.copyFromUtf8(message).toByteArray());
     }
 
     public static boolean setURI(ChaincodeStub stub, String id, String index, String value) throws IOException {
@@ -137,9 +151,24 @@ public class Extension {
         nft.setURI(index, value);
         nft.store(stub);
 
-        eventExtensibleAttribute(stub, id, index, value);
+        eventURI(stub, id, uri);
 
-        return false;
+        return true;
+    }
+
+    public static boolean setURI(ChaincodeStub stub, String id, Map<String, String> uri) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
+
+        if (hasInvalidURI(uri)) {
+            return false;
+        }
+
+        nft.setURI(uri);
+        nft.store(stub);
+
+        eventURI(stub, id, uri);
+
+        return true;
     }
 
     public static String getURI(ChaincodeStub stub, String id, String index) throws IOException {
@@ -152,84 +181,72 @@ public class Extension {
         return nft.getURI(index);
     }
 
-    public static boolean setXAttr(ChaincodeStub stub, String id, String index, String value) throws IOException {
+    public static Map<String, String> getURI(ChaincodeStub stub, String id) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
+        return nft.getURI();
+    }
+
+    private static void eventXAttr(ChaincodeStub stub, String id, Map<String, Object> xattr) {
+        String message = String.format("Update xattr to %s in Token %s", xattr.toString(), id);
+        stub.setEvent("XAttr", ByteString.copyFromUtf8(message).toByteArray());
+    }
+
+    public static boolean setXAttr(ChaincodeStub stub, String id, String index, Object value) throws IOException {
         TokenManager nft = TokenManager.load(stub, id);
         Map<String, Object> xattr = nft.getXAttr();
+
         if (!xattr.containsKey(index)) {
             return false;
         }
 
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(nft.getType(), index);
-        String dataType = info.get(0);
-        Object object = DataTypeConversion.strToDataType(dataType, value);
-        if (object == null) {
-            return false;
-        }
-
-        nft.setXAttr(index, object);
+        nft.setXAttr(index, value);
         nft.store(stub);
 
-        eventExtensibleAttribute(stub, id, index, value);
+        eventXAttr(stub, id, xattr);
 
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    public static String getXAttr(ChaincodeStub stub, String tokenId, String index) throws IOException {
-        TokenManager nft = TokenManager.load(stub, tokenId);
+    public static boolean setXAttr(ChaincodeStub stub, String id, Map<String, Object> xattr) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
+
+        TokenTypeManager manager = TokenTypeManager.load(stub);
+        Map<String, List<String>> attributes = manager.getType(Default.getType(stub, id));
+
+        if (attributes == null) {
+            return false;
+        }
+
+        if (xattr == null) {
+            xattr = new HashMap<>();
+        }
+
+        if (!hasValidXAttr(xattr, attributes)) {
+            return false;
+        }
+
+        if (!initXAttr(xattr, attributes)) {
+            return false;
+        }
+
+        nft.setXAttr(xattr);
+        nft.store(stub);
+
+        return true;
+    }
+
+    public static Object getXAttr(ChaincodeStub stub, String id, String index) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
         Map<String, Object> xattr = nft.getXAttr();
         if (!xattr.containsKey(index)) {
             return null;
         }
 
-        Object value = nft.getXAttr(index);
+        return nft.getXAttr(index);
+    }
 
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(nft.getType(), index);
-
-        if (info.isEmpty()) {
-            return null;
-        }
-
-        switch (info.get(0)) {
-            case DataType.INTEGER:
-                return Integer.toString((int) value);
-
-            case DataType.DOUBLE:
-                return Double.toString((double) value);
-
-            case DataType.BYTE:
-                return Byte.toString((byte) value);
-
-            case DataType.STRING:
-                return (String) value;
-
-            case DataType.BOOLEAN:
-                return Boolean.toString((boolean) value);
-
-            case DataType.LIST_INTEGER:
-                List<Integer> integers = (List<Integer>) value;
-                return integers != null ? integers.toString() : null;
-
-            case DataType.LIST_DOUBLE:
-                List<Double> doubles = (List<Double>) value;
-                return doubles != null ? doubles.toString() : null;
-
-            case DataType.LIST_BYTE:
-                List<Byte> bytes = (List<Byte>) value;
-                return bytes != null ? bytes.toString() : null;
-
-            case DataType.LIST_STRING:
-                List<String> strings = (List<String>) value;
-                return strings != null ? strings.toString() : null;
-
-            case DataType.LIST_BOOLEAN:
-                List<Boolean> booleans = (List<Boolean>) value;
-                return booleans != null ? booleans.toString() : null;
-
-            default:
-                return null;
-        }
+    public static Map<String, Object> getXAttr(ChaincodeStub stub, String id) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
+        return nft.getXAttr();
     }
 }
