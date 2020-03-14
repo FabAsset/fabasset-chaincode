@@ -3,7 +3,6 @@ package kr.ac.postech.sslab.fabasset.chaincode.manager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
