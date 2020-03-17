@@ -10,24 +10,28 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.*;
 
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.HASH_KEY;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.PATH_KEY;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.*;
 
 public class Extension {
-    private static final String QUERY_OWNER_AND_TYPE = "{\"selector\":{\"owner\":\"%s\",\"type\":\"%s\"}}";
-
     public static long balanceOf(ChaincodeStub stub, String owner, String type) {
-        String query = String.format(QUERY_OWNER_AND_TYPE, owner, type);
-        return Default.queryByValues(stub, query).size();
+        return tokenIdsOf(stub, owner, type).size();
     }
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner, String type) {
-        String query = String.format(QUERY_OWNER_AND_TYPE, owner, type);
-        return Default.queryByValues(stub, query);
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(OWNER_KEY, owner);
+        attributes.put(TYPE_KEY, type);
+        return Default.queryByValues(stub, attributes);
     }
 
     public static boolean mint(ChaincodeStub stub, String id, String type, Map<String, Object> xattr, Map<String, String> uri) throws IOException {
         String caller = Address.getMyAddress(stub);
+
+        TokenManager nft = new TokenManager();
+
+        if (nft.hasToken(stub, id)) {
+            return false;
+        }
 
         TokenTypeManager manager = TokenTypeManager.load(stub);
         Map<String, List<String>> attributes = manager.getType(type);
@@ -48,12 +52,6 @@ public class Extension {
         }
 
         if (hasInvalidURI(uri)) {
-            return false;
-        }
-
-        TokenManager nft = new TokenManager();
-
-        if (nft.hasToken(stub, id)) {
             return false;
         }
 

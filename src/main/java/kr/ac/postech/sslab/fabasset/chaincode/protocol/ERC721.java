@@ -29,8 +29,7 @@ public class ERC721 {
 	}
 
 	public static long balanceOf(ChaincodeStub stub, String owner) {
-		String query = String.format(QUERY_OWNER, owner);
-		return Default.queryByValues(stub, query).size();
+		return Default.tokenIdsOf(stub, owner).size();
 	}
 
 	public static String ownerOf(ChaincodeStub stub, String id) throws IOException {
