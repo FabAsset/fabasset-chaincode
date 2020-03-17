@@ -70,6 +70,16 @@ public class Default {
         return nft.toJSONString();
     }
 
+    public static List<String> history(ChaincodeStub stub, String id) {
+        List<String> histories = new LinkedList<>();
+        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(id);
+        while (resultsIterator.iterator().hasNext()) {
+            histories.add(resultsIterator.iterator().next().getStringValue());
+        }
+
+        return histories;
+    }
+
     static List<String> queryByValues(ChaincodeStub stub, Map<String, Object> attributes) {
         List<String> ids = new ArrayList<>();
 
@@ -88,15 +98,5 @@ public class Default {
         }
 
         return ids;
-    }
-
-    public static List<String> history(ChaincodeStub stub, String id) {
-        List<String> histories = new LinkedList<>();
-        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(id);
-        while (resultsIterator.iterator().hasNext()) {
-            histories.add(resultsIterator.iterator().next().getStringValue());
-        }
-
-        return histories;
     }
 }
