@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ERC721 {
-	private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
-
 	static void eventTransfer(ChaincodeStub stub, String from, String to, String id) {
 		String message = String.format("Transfer %s: from %s to %s", id, from, to);
 		stub.setEvent("Transfer", ByteString.copyFromUtf8(message).toByteArray());
