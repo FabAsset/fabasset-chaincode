@@ -54,7 +54,7 @@ public class TokenTypeManager {
         table.put(type, attributes);
     }
 
-    public void deleteType(String type) throws JsonProcessingException {
+    public void deleteType(String type) {
         table.remove(type);
     }
 
