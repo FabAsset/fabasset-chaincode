@@ -21,7 +21,7 @@ public class TokenTypeManagement {
 
         TokenTypeManager manager = TokenTypeManager.load(stub);
 
-        if (manager.hashType(type)) {
+        if (manager.hasType(type)) {
             return false;
         }
 
@@ -41,7 +41,7 @@ public class TokenTypeManagement {
             return false;
         }
 
-        if (!manager.hashType(type)) {
+        if (!manager.hasType(type)) {
             return false;
         }
 
@@ -53,7 +53,7 @@ public class TokenTypeManagement {
 
     public static Map<String, List<String>> retrieveTokenType(ChaincodeStub stub, String type) throws IOException {
         TokenTypeManager manager = TokenTypeManager.load(stub);
-        if (!manager.hashType(type)) {
+        if (!manager.hasType(type)) {
             return null;
         }
 
@@ -62,7 +62,7 @@ public class TokenTypeManagement {
 
     public static List<String> retrieveAttributeOfTokenType(ChaincodeStub stub, String type, String attribute) throws IOException {
         TokenTypeManager manager = TokenTypeManager.load(stub);
-        if (!manager.hashType(type)) {
+        if (!manager.hasType(type)) {
             return null;
         }
 

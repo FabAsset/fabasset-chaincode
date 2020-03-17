@@ -46,7 +46,7 @@ public class TokenTypeManager {
         this.table = table;
     }
 
-    public boolean hashType(String type) {
+    public boolean hasType(String type) {
         return table.containsKey(type);
     }
 
