@@ -1,14 +1,13 @@
-package kr.ac.postech.sslab.fabasset.chaincode.manager;
+package com.github.fabasset.chaincode.manager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.TOKEN_TYPES;
 
 public class TokenTypeManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -17,7 +16,7 @@ public class TokenTypeManager {
     private Map<String, Map<String, List<String>>> table;
 
     public static TokenTypeManager load(ChaincodeStub stub) throws IOException {
-        String json = stub.getStringState(TOKEN_TYPES);
+        String json = stub.getStringState(Key.TOKEN_TYPES);
         TokenTypeManager manager = new TokenTypeManager();
         Map<String, Map<String, List<String>>> table;
         if (json.trim().length() == 0) {
@@ -35,7 +34,7 @@ public class TokenTypeManager {
 
 
     public void store(ChaincodeStub stub) throws JsonProcessingException {
-        stub.putStringState(TOKEN_TYPES, toJSONString());
+        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
     }
 
     public Map<String, Map<String, List<String>>> getTable() {

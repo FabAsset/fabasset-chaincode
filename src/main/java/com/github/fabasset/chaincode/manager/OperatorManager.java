@@ -1,15 +1,14 @@
-package kr.ac.postech.sslab.fabasset.chaincode.manager;
+package com.github.fabasset.chaincode.manager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.OPERATORS_APPROVAL;
 
 public class OperatorManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -18,13 +17,13 @@ public class OperatorManager {
     private Map<String, Map<String, Boolean>> table;
 
     public void store(ChaincodeStub stub) throws JsonProcessingException {
-        stub.putStringState(OPERATORS_APPROVAL, toJSONString());
+        stub.putStringState(Key.OPERATORS_APPROVAL, toJSONString());
     }
 
     public static OperatorManager load(ChaincodeStub stub) throws IOException {
         OperatorManager manager = new OperatorManager();
         Map<String, Map<String, Boolean>> table;
-        String json = stub.getStringState(OPERATORS_APPROVAL);
+        String json = stub.getStringState(Key.OPERATORS_APPROVAL);
 
         if (json.trim().length() == 0) {
             table = new HashMap<>();

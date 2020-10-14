@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.chaincode.constant;
+package com.github.fabasset.chaincode.constant;
 
 public final class Function {
     private Function() {}

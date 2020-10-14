@@ -1,9 +1,9 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol;
+package com.github.fabasset.chaincode.protocol;
 
+import com.github.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.manager.OperatorManager;
+import com.github.fabasset.chaincode.manager.TokenManager;
 import com.google.protobuf.ByteString;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
-import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.HashMap;

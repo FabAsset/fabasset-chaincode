@@ -1,8 +1,9 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol;
+package com.github.fabasset.chaincode.protocol;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
-import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.constant.Key;
+import com.github.fabasset.chaincode.manager.TokenManager;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.KeyModification;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
@@ -10,8 +11,6 @@ import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.OWNER_KEY;
 
 public class Default {
     private Default() {}
@@ -61,7 +60,7 @@ public class Default {
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner) {
         Map<String, Object> attribute = new HashMap<>();
-        attribute.put(OWNER_KEY, owner);
+        attribute.put(Key.OWNER_KEY, owner);
         return queryByValues(stub, attribute);
     }
 

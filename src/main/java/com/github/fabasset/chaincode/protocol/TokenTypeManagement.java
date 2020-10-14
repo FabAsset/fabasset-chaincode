@@ -1,14 +1,13 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol;
+package com.github.fabasset.chaincode.protocol;
 
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.constant.DataType;
+import com.github.fabasset.chaincode.constant.Key;
+import com.github.fabasset.chaincode.manager.TokenTypeManager;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.DataType.STRING;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.ADMIN_KEY;
 
 public class TokenTypeManagement {
     public static List<String> tokenTypesOf(ChaincodeStub stub) throws IOException {
@@ -25,8 +24,8 @@ public class TokenTypeManagement {
             return false;
         }
 
-        List<String> info = new ArrayList<>(Arrays.asList(STRING, caller));
-        attributes.put(ADMIN_KEY, info);
+        List<String> info = new ArrayList<>(Arrays.asList(DataType.STRING, caller));
+        attributes.put(Key.ADMIN_KEY, info);
         manager.addType(type, attributes);
         manager.store(stub);
 
@@ -37,7 +36,7 @@ public class TokenTypeManagement {
         String caller = Address.getMyAddress(stub);
         TokenTypeManager manager = TokenTypeManager.load(stub);
 
-        if (!caller.equals(manager.getAttribute(type, ADMIN_KEY).get(1))) {
+        if (!caller.equals(manager.getAttribute(type, Key.ADMIN_KEY).get(1))) {
             return false;
         }
 

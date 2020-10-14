@@ -1,18 +1,17 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol;
+package com.github.fabasset.chaincode.protocol;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fabasset.chaincode.client.Address;
+import com.github.fabasset.chaincode.constant.Key;
+import com.github.fabasset.chaincode.manager.TokenManager;
+import com.github.fabasset.chaincode.manager.TokenTypeManager;
+import com.github.fabasset.chaincode.util.DataTypeConversion;
 import com.google.protobuf.ByteString;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
-import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.*;
 
 public class Extension {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -32,8 +31,8 @@ public class Extension {
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner, String type) {
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put(OWNER_KEY, owner);
-        attributes.put(TYPE_KEY, type);
+        attributes.put(Key.OWNER_KEY, owner);
+        attributes.put(Key.TYPE_KEY, type);
         return Default.queryByValues(stub, attributes);
     }
 
@@ -161,10 +160,10 @@ public class Extension {
             return false;
         }
         else if (uri.keySet().size() == 1) {
-            return !uri.containsKey(PATH_KEY) && !uri.containsKey(HASH_KEY);
+            return !uri.containsKey(Key.PATH_KEY) && !uri.containsKey(Key.HASH_KEY);
         }
         else if (uri.keySet().size() == 2) {
-            return !uri.containsKey(PATH_KEY) || !uri.containsKey(HASH_KEY);
+            return !uri.containsKey(Key.PATH_KEY) || !uri.containsKey(Key.HASH_KEY);
         }
 
         return true;
@@ -173,15 +172,15 @@ public class Extension {
     private static void configureURI(Map<String, String> uri) {
         if (uri == null || uri.keySet().size() == 0) {
             uri = new HashMap<>();
-            uri.put(HASH_KEY, "");
-            uri.put(PATH_KEY, "");
+            uri.put(Key.HASH_KEY, "");
+            uri.put(Key.PATH_KEY, "");
         }
         else if (uri.keySet().size() == 1) {
-            if (uri.containsKey(PATH_KEY)) {
-                uri.put(HASH_KEY, "");
+            if (uri.containsKey(Key.PATH_KEY)) {
+                uri.put(Key.HASH_KEY, "");
             }
-            else if (uri.containsKey(HASH_KEY)) {
-                uri.put(PATH_KEY, "");
+            else if (uri.containsKey(Key.HASH_KEY)) {
+                uri.put(Key.PATH_KEY, "");
             }
         }
     }
@@ -215,7 +214,7 @@ public class Extension {
         Map<String, List<String>> attributes = manager.getType(type);
 
         for (Map.Entry<String, List<String>> attribute : attributes.entrySet()) {
-            if (attribute.getKey().equals(ADMIN_KEY)) {
+            if (attribute.getKey().equals(Key.ADMIN_KEY)) {
                 continue;
             }
 

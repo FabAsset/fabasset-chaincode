@@ -1,21 +1,21 @@
-package kr.ac.postech.sslab.fabasset.chaincode;
+package com.github.fabasset.chaincode;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
-import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.TokenTypeManagement;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.Default;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.ERC721;
-import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
+import com.github.fabasset.chaincode.manager.OperatorManager;
+import com.github.fabasset.chaincode.manager.TokenTypeManager;
+import com.github.fabasset.chaincode.protocol.Extension;
+import com.github.fabasset.chaincode.protocol.TokenTypeManagement;
+import com.github.fabasset.chaincode.protocol.Default;
+import com.github.fabasset.chaincode.protocol.ERC721;
+import com.github.fabasset.chaincode.util.DataTypeConversion;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Function.*;
+import static com.github.fabasset.chaincode.constant.Function.*;
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.*;
+import static com.github.fabasset.chaincode.constant.Message.*;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;

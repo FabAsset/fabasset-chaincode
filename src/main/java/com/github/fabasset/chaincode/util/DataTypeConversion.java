@@ -1,10 +1,10 @@
-package kr.ac.postech.sslab.fabasset.chaincode.util;
+package com.github.fabasset.chaincode.util;
+
+import com.github.fabasset.chaincode.constant.DataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.DataType.*;
 
 public class DataTypeConversion {
     private static final String EMPTY_LIST = "[]";
@@ -13,58 +13,58 @@ public class DataTypeConversion {
 
     public static Object strToDataType(String dataType, String value) {
         switch (dataType) {
-            case BYTE:
+            case DataType.BYTE:
                 return Byte.parseByte(value);
 
-            case SHORT:
+            case DataType.SHORT:
                 return Short.parseShort(value);
 
-            case INTEGER:
+            case DataType.INTEGER:
                 return Integer.parseInt(value);
 
-            case LONG:
+            case DataType.LONG:
                 return Long.parseLong(value);
 
-            case FLOAT:
+            case DataType.FLOAT:
                 return Float.parseFloat(value);
 
-            case DOUBLE:
+            case DataType.DOUBLE:
                 return Double.parseDouble(value);
 
-            case BOOLEAN:
+            case DataType.BOOLEAN:
                 return Boolean.parseBoolean(value);
 
-            case CHARACTER:
+            case DataType.CHARACTER:
                 return value.charAt(0);
 
-            case STRING:
+            case DataType.STRING:
                 return value;
 
-            case LIST_BYTE:
+            case DataType.LIST_BYTE:
                 return toListByte(value);
 
-            case LIST_SHORT:
+            case DataType.LIST_SHORT:
                 return toListShort(value);
 
-            case LIST_INTEGER:
+            case DataType.LIST_INTEGER:
                 return toListInteger(value);
 
-            case LIST_LONG:
+            case DataType.LIST_LONG:
                 return toListLong(value);
 
-            case LIST_FLOAT:
+            case DataType.LIST_FLOAT:
                 return toListFloat(value);
 
-            case LIST_DOUBLE:
+            case DataType.LIST_DOUBLE:
                 return toListDouble(value);
 
-            case LIST_BOOLEAN:
+            case DataType.LIST_BOOLEAN:
                 return toListBoolean(value);
 
-            case LIST_CHARACTER:
+            case DataType.LIST_CHARACTER:
                 return toListCharacter(value);
 
-            case LIST_STRING:
+            case DataType.LIST_STRING:
                 return toListString(value);
 
             default:
@@ -75,66 +75,66 @@ public class DataTypeConversion {
     @SuppressWarnings("unchecked")
     public static String dataTypeToStr(String dataType, Object value) {
         switch (dataType) {
-            case BYTE:
+            case DataType.BYTE:
                 return Byte.toString((byte) value);
 
-            case SHORT:
+            case DataType.SHORT:
                 return Short.toString((short) value);
 
-            case INTEGER:
+            case DataType.INTEGER:
                 return Integer.toString((int) value);
 
-            case LONG:
+            case DataType.LONG:
                 return Long.toString((long) value);
 
-            case FLOAT:
+            case DataType.FLOAT:
                 return Float.toString((float) value);
 
-            case DOUBLE:
+            case DataType.DOUBLE:
                 return Double.toString((double) value);
 
-            case BOOLEAN:
+            case DataType.BOOLEAN:
                 return Boolean.toString((boolean) value);
 
-            case CHARACTER:
+            case DataType.CHARACTER:
                 return Character.toString((char) value);
 
-            case STRING:
+            case DataType.STRING:
                 return (String) value;
 
-            case LIST_BYTE:
+            case DataType.LIST_BYTE:
                 List<Byte> bytes = (List<Byte>) value;
                 return bytes != null ? bytes.toString() : null;
 
-            case LIST_SHORT:
+            case DataType.LIST_SHORT:
                 List<Short> shorts = (List<Short>) value;
                 return shorts != null ? shorts.toString() : null;
 
-            case LIST_INTEGER:
+            case DataType.LIST_INTEGER:
                 List<Integer> integers = (List<Integer>) value;
                 return integers != null ? integers.toString() : null;
 
-            case LIST_LONG:
+            case DataType.LIST_LONG:
                 List<Long> longs = (List<Long>) value;
                 return longs != null ? longs.toString() : null;
 
-            case LIST_FLOAT:
+            case DataType.LIST_FLOAT:
                 List<Float> floats = (List<Float>) value;
                 return floats != null ? floats.toString() : null;
 
-            case LIST_DOUBLE:
+            case DataType.LIST_DOUBLE:
                 List<Double> doubles = (List<Double>) value;
                 return doubles != null ? doubles.toString() : null;
 
-            case LIST_BOOLEAN:
+            case DataType.LIST_BOOLEAN:
                 List<Boolean> booleans = (List<Boolean>) value;
                 return booleans != null ? booleans.toString() : null;
 
-            case LIST_CHARACTER:
+            case DataType.LIST_CHARACTER:
                 List<Character> characters = (List<Character>) value;
                 return characters != null ? characters.toString() : null;
 
-            case LIST_STRING:
+            case DataType.LIST_STRING:
                 List<String> strings = (List<String>) value;
                 return strings != null ? strings.toString() : null;
 
